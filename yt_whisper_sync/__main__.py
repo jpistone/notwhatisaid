@@ -5,6 +5,7 @@ Main entry point for the YouTube Whisper Sync application.
 import os
 import sys
 import subprocess
+from pathlib import Path
 
 def check_ffmpeg():
     """Check if FFmpeg is installed."""
@@ -24,11 +25,19 @@ def check_ffmpeg():
 def ensure_directories():
     """Ensure required directories exist."""
     # Get the directory of the current file
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = Path(__file__).parent
     
     # Create upload directory if it doesn't exist
-    uploads_dir = os.path.join(base_dir, 'static', 'uploads')
-    os.makedirs(uploads_dir, exist_ok=True)
+    uploads_dir = base_dir / 'static' / 'uploads'
+    uploads_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Create templates directory if it doesn't exist
+    templates_dir = base_dir / 'templates'
+    templates_dir.mkdir(parents=True, exist_ok=True)
+    
+    print(f"Base directory: {base_dir}")
+    print(f"Templates directory: {templates_dir}")
+    print(f"Uploads directory: {uploads_dir}")
 
 def main():
     """Run the application."""
@@ -38,7 +47,7 @@ def main():
     ensure_directories()
     
     # Import here to avoid loading the app before directories are created
-    from youtube_whisper_sync.app import app
+    from yt_whisper_sync.app import app
     app.run(debug=True, host='0.0.0.0', port=5000)
 
 if __name__ == '__main__':
