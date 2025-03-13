@@ -1,22 +1,31 @@
+"""
+Flask application for YouTube Whisper Sync.
+"""
+
 import os
 import json
 import uuid
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, url_for
 from pytube import YouTube
 import whisper_timestamped
 
-app = Flask(__name__)
+# Get the directory of the current file
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
 
-# Directory to store downloaded videos and transcripts
-UPLOAD_FOLDER = 'static/uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# Create Flask app
+app = Flask(__name__, 
+           template_folder=os.path.join(BASE_DIR, 'templates'),
+           static_folder=os.path.join(BASE_DIR, 'static'))
 
 @app.route('/')
 def index():
+    """Render the main page."""
     return render_template('index.html')
 
 @app.route('/process', methods=['POST'])
 def process_video():
+    """Process a YouTube video URL to extract transcript."""
     youtube_url = request.form.get('youtube_url')
     if not youtube_url:
         return jsonify({'error': 'No YouTube URL provided'}), 400
@@ -68,6 +77,7 @@ def process_video():
 
 @app.route('/transcript/<video_id>')
 def get_transcript(video_id):
+    """Get the transcript for a processed video."""
     transcript_path = os.path.join(UPLOAD_FOLDER, video_id, 'transcript.json')
     if not os.path.exists(transcript_path):
         return jsonify({'error': 'Transcript not found'}), 404
@@ -76,6 +86,3 @@ def get_transcript(video_id):
         transcript_data = json.load(f)
     
     return jsonify(transcript_data)
-
-if __name__ == '__main__':
-    app.run(debug=True)

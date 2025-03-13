@@ -1,4 +1,4 @@
-# YouTube Transcript Sync
+# YouTube Whisper Sync
 
 This application takes a YouTube video URL, downloads the video, generates a word-level timestamped transcript using whisper-timestamped, and displays the video alongside the transcript. As the video plays, the transcript scrolls automatically and highlights the word being spoken in real-time.
 
@@ -9,6 +9,7 @@ This application takes a YouTube video URL, downloads the video, generates a wor
 - Synchronized highlighting of words as they are spoken in the video
 - Interactive transcript - click any word to jump to that position in the video
 - Responsive design that works on desktop and mobile
+- Python module-based structure (run with `python -m`)
 
 ## Prerequisites
 
@@ -18,20 +19,20 @@ This application takes a YouTube video URL, downloads the video, generates a wor
 ## Installation
 
 1. Clone this repository:
-```
-git clone https://github.com/yourusername/youtube-whisper-sync
-cd youtube-whisper-sync
+```bash
+git clone https://github.com/yourusername/youtube_whisper_sync
+cd youtube_whisper_sync
 ```
 
 2. Create a virtual environment and activate it:
-```
+```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
 3. Install the required packages:
-```
-pip install whisper-timestamped pytube flask
+```bash
+pip install -r requirements.txt
 ```
 
 4. Install FFmpeg (if not already installed):
@@ -41,9 +42,9 @@ pip install whisper-timestamped pytube flask
 
 ## Usage
 
-1. Start the Flask server:
-```
-python app.py
+1. Run the application as a Python module:
+```bash
+python -m youtube_whisper_sync
 ```
 
 2. Open your browser and navigate to `http://127.0.0.1:5000/`
