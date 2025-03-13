@@ -8,5 +8,6 @@ COPY devcontainer_bashrc /home/codespace/.bashrc
 
 # Install 
 # USER codespace
-# RUN npm install -g @anthropic-ai/claude-code
+# RUN pip install whisper-timestamped
+
 
