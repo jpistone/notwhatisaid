@@ -174,4 +174,4 @@ cython_debug/
 .pypirc
 
 # Application specific (to be enabled once im done dev)
-# yt_whisper_sync/uploads/
+yt_whisper_sync/static/uploads/
