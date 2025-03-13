@@ -16,10 +16,12 @@ if __name__ == "__main__":
     # Ensure upload folder exists
     upload_folder = current_dir / "yt_whisper_sync" / "static" / "uploads"
     upload_folder.mkdir(parents=True, exist_ok=True)
+
     
     print(f"Starting YouTube Whisper Sync application...")
     print(f"Project root: {current_dir}")
     print(f"Upload folder: {upload_folder}")
+    
     
     # Run the Flask app
     app.run(debug=True, host='0.0.0.0', port=5000)

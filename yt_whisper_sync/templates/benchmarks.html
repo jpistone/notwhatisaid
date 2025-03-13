@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whisper Benchmarks</title>
+    <!-- Include Bootstrap for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .benchmark-card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .chart-container {
+            height: 200px;
+            margin-bottom: 20px;
+        }
+        .key-metric {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .timestamp {
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Whisper Transcription Benchmarks</h1>
+        
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Benchmarks</li>
+            </ol>
+        </nav>
+        
+        {% if error %}
+            <div class="alert alert-warning" role="alert">
+                {{ error }}
+            </div>
+        {% endif %}
+        
+        {% if benchmarks %}
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Execution Time Comparison</h5>
+                            <div class="chart-container">
+                                <canvas id="executionTimeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">CPU Usage Comparison</h5>
+                            <div class="chart-container">
+                                <canvas id="cpuUsageChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 class="mb-3">Detailed Benchmark Results</h2>
+            {% for benchmark in benchmarks %}
+                <div class="card benchmark-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{ benchmark.get('function', 'Unknown Function') }}</h5>
+                        <span class="timestamp">{{ benchmark.get('timestamp', '') }}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p class="mb-2">Execution Time:</p>
+                                <p class="key-metric">{{ "%.2f"|format(benchmark.get('execution_time', 0)) }} seconds</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="mb-2">CPU Usage (Avg):</p>
+                                <p class="key-metric">{{ "%.1f"|format(benchmark.get('cpu_usage_avg', 0)) }}%</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="mb-2">CPU Usage (Max):</p>
+                                <p class="key-metric">{{ "%.1f"|format(benchmark.get('cpu_usage_max', 0)) }}%</p>
+                            </div>
+                        </div>
+                        
+                        {% if benchmark.get('gpu_usage_summary') and benchmark.get('gpu_usage_summary')|length > 0 %}
+                            <hr>
+                            <h6>GPU Usage</h6>
+                            <div class="row">
+                                {% for gpu_id, gpu_data in benchmark.get('gpu_usage_summary', {}).items() %}
+                                    {% if gpu_data %}
+                                    <div class="col-md-6">
+                                        <div class="card mb-2">
+                                            <div class="card-body">
+                                                <h6 class="card-title">{{ gpu_id }}</h6>
+                                                <p class="mb-1">Utilization: {{ "%.1f"|format(gpu_data.get('gpu_util_avg', 0)) }}% (avg), {{ "%.1f"|format(gpu_data.get('gpu_util_max', 0)) }}% (max)</p>
+                                                <p class="mb-1">Memory: {{ "%.1f"|format(gpu_data.get('memory_util_avg', 0)) }}% (avg), {{ "%.1f"|format(gpu_data.get('memory_util_max', 0)) }}% (max)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <hr>
+                            <div class="alert alert-info mt-2" role="alert">
+                                No GPU usage data available for this benchmark.
+                            </div>
+                        {% endif %}
+                        
+                        {% if benchmark.get('error') %}
+                            <div class="alert alert-danger mt-3" role="alert">
+                                <strong>Error:</strong> {{ benchmark.get('error') }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No benchmark data available. Run some transcriptions first.
+            </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            {% if benchmarks %}
+                // Prepare data for charts
+                const benchmarkData = {{ benchmarks|tojson }};
+                
+                // Execution Time Chart
+                const executionTimeCtx = document.getElementById('executionTimeChart').getContext('2d');
+                const executionTimeChart = new Chart(executionTimeCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: benchmarkData.map(b => {
+                            // Format timestamp for display
+                            const date = new Date(b.timestamp);
+                            return date.toLocaleString();
+                        }),
+                        datasets: [{
+                            label: 'Execution Time (seconds)',
+                            data: benchmarkData.map(b => b.execution_time || 0),
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Seconds'
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // CPU Usage Chart
+                const cpuUsageCtx = document.getElementById('cpuUsageChart').getContext('2d');
+                const cpuUsageChart = new Chart(cpuUsageCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: benchmarkData.map(b => {
+                            // Format timestamp for display
+                            const date = new Date(b.timestamp);
+                            return date.toLocaleString();
+                        }),
+                        datasets: [{
+                            label: 'CPU Usage Average (%)',
+                            data: benchmarkData.map(b => b.cpu_usage_avg || 0),
+                            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }, {
+                            label: 'CPU Usage Max (%)',
+                            data: benchmarkData.map(b => b.cpu_usage_max || 0),
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Percentage (%)'
+                                }
+                            }
+                        }
+                    }
+                });
+            {% endif %}
+        });
+    </script>
+</body>
+</html>

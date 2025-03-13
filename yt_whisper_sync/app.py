@@ -9,6 +9,7 @@ from pathlib import Path
 from flask import Flask, request, render_template, jsonify, url_for
 from pytubefix import YouTube
 import whisper_timestamped as whisper
+from yt_whisper_sync.benchmark import WhisperBenchmark
 
 # Get the directory of the current file
 # Correctly handle the path for /workspaces/notwhatisaid/yt_whisper_sync/app.py
@@ -19,6 +20,17 @@ UPLOAD_FOLDER = BASE_DIR / 'static' / 'uploads'
 # Make sure the upload folder exists
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 print(f"Upload folder: {UPLOAD_FOLDER}")
+# Initialize benchmark directory (add after UPLOAD_FOLDER.mkdir line)
+BENCHMARK_DIR = PROJECT_ROOT / 'benchmarks'
+BENCHMARK_DIR.mkdir(parents=True, exist_ok=True)
+print(f"Benchmark directory: {BENCHMARK_DIR}")
+
+# Initialize benchmarking
+try:
+    benchmark = WhisperBenchmark(output_dir=BENCHMARK_DIR)
+    print("Whisper benchmarking initialized successfully")
+except Exception as e:
+    print(f"Warning: Could not initialize benchmarking: {e}")
 
 # Create Flask app
 # Make sure template and static folders are absolute paths
@@ -54,7 +66,7 @@ def status():
         'template_dir_exists': template_path.exists(),
         'upload_dir_exists': UPLOAD_FOLDER.exists(),
         'whisper_available': 'whisper_timestamped' in sys.modules,
-        'pytube_available': 'pytube' in sys.modules
+        'pytube_available': 'pytubefix' in sys.modules
     })
 
 @app.route('/process', methods=['POST'])
@@ -126,7 +138,9 @@ def process_video():
         print("Starting transcription with whisper-timestamped...")
         audio = whisper.load_audio(audio_path)
         model = whisper.load_model("base")
-        result = whisper.transcribe(model, audio, language="en")
+        
+        transcribe_with_benchmark = benchmark.benchmark(whisper.transcribe)
+        result = transcribe_with_benchmark(model, audio, language="en")
         print("Transcription completed successfully")
         
         # Save transcript to JSON file
@@ -168,6 +182,34 @@ def get_transcript(video_id):
         transcript_data = json.load(f)
     
     return jsonify(transcript_data)
+
+@app.route('/benchmarks')
+def view_benchmarks():
+    """Display all saved benchmark data."""
+    # Path to the consolidated benchmarks file
+    consolidated_file = BENCHMARK_DIR / "whisper_benchmarks.json"
+    
+    if not consolidated_file.exists():
+        return render_template('benchmarks.html', 
+                              benchmarks=None, 
+                              error="No benchmark data found. Run some transcriptions first.")
+    
+    try:
+        with open(consolidated_file, 'r') as f:
+            benchmarks = json.load(f)
+            
+        # Sort benchmarks by timestamp (newest first)
+        benchmarks.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+        
+        return render_template('benchmarks.html', 
+                              benchmarks=benchmarks, 
+                              error=None)
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        return render_template('benchmarks.html', 
+                              benchmarks=None, 
+                              error=f"Error loading benchmark data: {str(e)}")
 
 if __name__ == '__main__':
     # Ensure upload folder exists
