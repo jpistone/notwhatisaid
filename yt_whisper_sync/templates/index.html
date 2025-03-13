@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Whisper Sync</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .loading {
+            display: none;
+        }
+        #video-container {
+            margin-top: 2rem;
+            display: none;
+        }
+        #transcript-container {
+            margin-top: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .word {
+            cursor: pointer;
+            padding: 2px;
+            margin: 1px;
+            display: inline-block;
+        }
+        .word:hover {
+            background-color: #f0f0f0;
+        }
+        .word.active {
+            background-color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">YouTube Whisper Sync</h1>
+        <p class="lead text-center">Synchronize YouTube videos with word-level timestamps using OpenAI's Whisper</p>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="youtube-form">
+                            <div class="mb-3">
+                                <label for="youtube-url" class="form-label">YouTube URL</label>
+                                <input type="url" class="form-control" id="youtube-url" 
+                                       placeholder="https://www.youtube.com/watch?v=..." required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Process Video</button>
+                            </div>
+                        </form>
+                        
+                        <div class="loading text-center mt-3">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Processing video, please wait... This may take several minutes.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="error-container" class="alert alert-danger mt-3" style="display: none;"></div>
+                
+                <div id="video-container">
+                    <h3 id="video-title" class="mb-3"></h3>
+                    <div class="ratio ratio-16x9">
+                        <video id="video-player" controls></video>
+                    </div>
+                    
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            Transcript
+                        </div>
+                        <div class="card-body">
+                            <div id="transcript-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('youtube-form');
+            const loading = document.querySelector('.loading');
+            const videoContainer = document.getElementById('video-container');
+            const videoTitle = document.getElementById('video-title');
+            const videoPlayer = document.getElementById('video-player');
+            const transcriptContainer = document.getElementById('transcript-container');
+            const errorContainer = document.getElementById('error-container');
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Clear previous errors
+                errorContainer.style.display = 'none';
+                errorContainer.textContent = '';
+                
+                const youtubeUrl = document.getElementById('youtube-url').value;
+                if (!youtubeUrl) return;
+                
+                // Show loading
+                loading.style.display = 'block';
+                videoContainer.style.display = 'none';
+                
+                try {
+                    console.log('Processing video URL:', youtubeUrl);
+                    
+                    // Process the video
+                    const processingResponse = await fetch('/process', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `youtube_url=${encodeURIComponent(youtubeUrl)}`
+                    });
+                    
+                    console.log('Processing response status:', processingResponse.status);
+                    const processingData = await processingResponse.json();
+                    console.log('Processing response data:', processingData);
+                    
+                    if (!processingResponse.ok) {
+                        let errorMsg = processingData.error || 'Failed to process video';
+                        if (processingData.details) {
+                            console.error('Error details:', processingData.details);
+                            errorMsg += '\n\nDetails: ' + processingData.details;
+                        }
+                        throw new Error(errorMsg);
+                    }
+                    
+                    // Get the transcript
+                    console.log('Getting transcript for video ID:', processingData.video_id);
+                    const transcriptResponse = await fetch(`/transcript/${processingData.video_id}`);
+                    console.log('Transcript response status:', transcriptResponse.status);
+                    const transcriptData = await transcriptResponse.json();
+                    console.log('Transcript data received:', transcriptData ? 'Yes' : 'No');
+                    
+                    if (!transcriptResponse.ok) {
+                        throw new Error(transcriptData.error || 'Failed to get transcript');
+                    }
+                    
+                    // Update the UI with the video
+                    videoTitle.textContent = processingData.video_title;
+                    videoPlayer.src = `static/${processingData.video_path}`;
+                    
+                    // Display the transcript with clickable words
+                    displayTranscript(transcriptData, videoPlayer);
+                    
+                    // Show the video section
+                    videoContainer.style.display = 'block';
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    errorContainer.innerHTML = `<strong>Error:</strong> ${error.message || 'An unexpected error occurred'}`;
+                    errorContainer.style.display = 'block';
+                    
+                    // Add a "Try Again" button
+                    const tryAgainBtn = document.createElement('button');
+                    tryAgainBtn.className = 'btn btn-warning mt-3';
+                    tryAgainBtn.textContent = 'Try Again';
+                    tryAgainBtn.onclick = function() {
+                        errorContainer.style.display = 'none';
+                        form.querySelector('button[type="submit"]').disabled = false;
+                    };
+                    errorContainer.appendChild(document.createElement('br'));
+                    errorContainer.appendChild(tryAgainBtn);
+                } finally {
+                    loading.style.display = 'none';
+                }
+            });
+            
+            function displayTranscript(data, player) {
+                transcriptContainer.innerHTML = '';
+                
+                // Process segments
+                data.segments.forEach(segment => {
+                    const segmentDiv = document.createElement('div');
+                    segmentDiv.className = 'segment mb-2';
+                    
+                    // Process words
+                    segment.words.forEach(word => {
+                        const wordSpan = document.createElement('span');
+                        wordSpan.className = 'word';
+                        wordSpan.textContent = word.text;
+                        wordSpan.dataset.start = word.start;
+                        
+                        wordSpan.addEventListener('click', function() {
+                            player.currentTime = parseFloat(word.start);
+                            player.play();
+                            
+                            // Highlight the active word
+                            document.querySelectorAll('.word.active').forEach(el => {
+                                el.classList.remove('active');
+                            });
+                            wordSpan.classList.add('active');
+                        });
+                        
+                        segmentDiv.appendChild(wordSpan);
+                    });
+                    
+                    transcriptContainer.appendChild(segmentDiv);
+                });
+                
+                // Add timeupdate listener to highlight the current word
+                player.addEventListener('timeupdate', function() {
+                    const currentTime = player.currentTime;
+                    highlightCurrentWord(currentTime);
+                });
+            }
+            
+            function highlightCurrentWord(currentTime) {
+                const words = document.querySelectorAll('.word');
+                let activeWordFound = false;
+                
+                words.forEach((word, index) => {
+                    const start = parseFloat(word.dataset.start);
+                    const nextWord = words[index + 1];
+                    const end = nextWord ? parseFloat(nextWord.dataset.start) : start + 1;
+                    
+                    if (currentTime >= start && currentTime < end && !activeWordFound) {
+                        word.classList.add('active');
+                        
+                        // Scroll to the active word if it's not in view
+                        const containerRect = transcriptContainer.getBoundingClientRect();
+                        const wordRect = word.getBoundingClientRect();
+                        
+                        if (wordRect.top < containerRect.top || wordRect.bottom > containerRect.bottom) {
+                            word.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                        
+                        activeWordFound = true;
+                    } else {
+                        word.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
