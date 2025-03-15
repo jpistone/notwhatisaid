@@ -1,0 +1,571 @@
+{
+  "function": "transcribe_timestamped",
+  "timestamp": "2025-03-13T03:54:42.529614",
+  "cpu_usage": [
+    9.1,
+    12.3,
+    11.5,
+    17.9,
+    8.4,
+    15.8,
+    18.5,
+    22.0,
+    16.5,
+    21.0,
+    23.8,
+    11.8,
+    20.8,
+    8.3,
+    18.9,
+    19.8,
+    8.3,
+    8.3,
+    13.2,
+    8.3,
+    8.3,
+    16.5,
+    18.3,
+    8.3,
+    9.2,
+    8.3,
+    8.3,
+    8.3,
+    8.3,
+    8.3,
+    11.6,
+    8.3,
+    14.0,
+    8.3,
+    8.3,
+    8.3,
+    15.0,
+    10.8,
+    12.5,
+    8.3,
+    17.5,
+    8.3,
+    13.3,
+    8.3,
+    9.1,
+    8.3,
+    22.5,
+    8.3,
+    10.8,
+    8.3,
+    15.0,
+    8.3,
+    12.4,
+    19.0,
+    15.8
+  ],
+  "gpu_usage": [
+    [
+      {
+        "index": 0,
+        "gpu_util": 6,
+        "memory_util": 0,
+        "memory_used": 1158348800,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 8,
+        "memory_util": 0,
+        "memory_used": 1282080768,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 8,
+        "memory_util": 0,
+        "memory_used": 1282080768,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 22,
+        "memory_util": 7,
+        "memory_used": 1317732352,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 36,
+        "memory_util": 12,
+        "memory_used": 1321926656,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 36,
+        "memory_util": 12,
+        "memory_used": 1321926656,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 36,
+        "memory_util": 12,
+        "memory_used": 1324023808,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 36,
+        "memory_util": 12,
+        "memory_used": 1324023808,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 36,
+        "memory_util": 13,
+        "memory_used": 1324023808,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 32,
+        "memory_util": 13,
+        "memory_used": 1324023808,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 32,
+        "memory_util": 13,
+        "memory_used": 1324941312,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 34,
+        "memory_util": 13,
+        "memory_used": 1324285952,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 34,
+        "memory_util": 13,
+        "memory_used": 1326383104,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 30,
+        "memory_util": 12,
+        "memory_used": 1326252032,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 32,
+        "memory_util": 13,
+        "memory_used": 1326252032,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 32,
+        "memory_util": 13,
+        "memory_used": 1326252032,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 13,
+        "memory_used": 1326252032,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 13,
+        "memory_used": 1326252032,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 30,
+        "memory_util": 13,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 30,
+        "memory_util": 13,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 29,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 27,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 27,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 29,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 29,
+        "memory_util": 13,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 29,
+        "memory_util": 13,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 30,
+        "memory_util": 13,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 30,
+        "memory_util": 13,
+        "memory_used": 1325989888,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 29,
+        "memory_util": 12,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 29,
+        "memory_util": 12,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 30,
+        "memory_util": 13,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 30,
+        "memory_util": 13,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 30,
+        "memory_util": 13,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 30,
+        "memory_util": 13,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 31,
+        "memory_util": 13,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 31,
+        "memory_util": 13,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 28,
+        "memory_util": 12,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 30,
+        "memory_util": 13,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 31,
+        "memory_util": 13,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 31,
+        "memory_util": 13,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "gpu_util": 29,
+        "memory_util": 13,
+        "memory_used": 1328087040,
+        "memory_total": 8589934592
+      }
+    ]
+  ],
+  "execution_time": 33.09031915664673,
+  "cpu_usage_avg": 12.49454545454545,
+  "cpu_usage_max": 23.8,
+  "gpu_usage_summary": {
+    "gpu_0": {
+      "gpu_util_avg": 28.672727272727272,
+      "gpu_util_max": 36,
+      "memory_util_avg": 11.709090909090909,
+      "memory_util_max": 13,
+      "memory_used_avg": 1321495309.9636364,
+      "memory_total": 8589934592
+    }
+  }
+}

@@ -54,7 +54,7 @@ class WhisperBenchmark:
     def get_gpu_usage(self):
         """Get GPU usage information."""
         if not has_gpu or self.gpu_count == 0:
-            return None
+            return []  # Return empty list instead of None
         
         gpu_info = []
         try:
@@ -73,7 +73,7 @@ class WhisperBenchmark:
             return gpu_info
         except Exception as e:
             print(f"Error getting GPU usage: {e}")
-            return None
+            return []  # Return empty list on error
 
     def _monitor_resources(self, stop_event, metrics):
         """Monitor CPU and GPU usage in a separate thread."""
@@ -145,25 +145,47 @@ class WhisperBenchmark:
                 metrics["cpu_usage_max"] = max(metrics["cpu_usage"]) if metrics["cpu_usage"] else 0
                 
                 # Process GPU metrics if available
-                if metrics["gpu_usage"] and any(metrics["gpu_usage"]):
-                    # Filter out None values
-                    gpu_readings = [g for g in metrics["gpu_usage"] if g]
+                if metrics["gpu_usage"]:
+                    # Organize readings by GPU index
+                    readings_by_gpu = {}
                     
-                    if gpu_readings:
-                        # Calculate averages for each GPU
-                        gpu_avgs = {}
-                        for i in range(self.gpu_count):
-                            gpu_utils = [reading[i]["gpu_util"] for reading in gpu_readings if i < len(reading)]
-                            mem_utils = [reading[i]["memory_util"] for reading in gpu_readings if i < len(reading)]
+                    # Iterate through all readings (each reading is a list of GPU dictionaries)
+                    for reading_list in metrics["gpu_usage"]:
+                        if not reading_list:  # Skip empty readings
+                            continue
                             
-                            if gpu_utils and mem_utils:
-                                gpu_avgs[f"gpu_{i}"] = {
-                                    "gpu_util_avg": sum(gpu_utils) / len(gpu_utils),
-                                    "gpu_util_max": max(gpu_utils),
-                                    "memory_util_avg": sum(mem_utils) / len(mem_utils),
-                                    "memory_util_max": max(mem_utils)
+                        # Process each GPU in this reading
+                        for gpu_data in reading_list:
+                            gpu_index = gpu_data["index"]
+                            
+                            if gpu_index not in readings_by_gpu:
+                                readings_by_gpu[gpu_index] = {
+                                    "gpu_util": [],
+                                    "memory_util": [],
+                                    "memory_used": [],
+                                    "memory_total": []
                                 }
-                        
+                            
+                            # Add this reading's data
+                            readings_by_gpu[gpu_index]["gpu_util"].append(gpu_data["gpu_util"])
+                            readings_by_gpu[gpu_index]["memory_util"].append(gpu_data["memory_util"])
+                            readings_by_gpu[gpu_index]["memory_used"].append(gpu_data["memory_used"])
+                            readings_by_gpu[gpu_index]["memory_total"].append(gpu_data["memory_total"])
+                    
+                    # Calculate summaries for each GPU
+                    gpu_avgs = {}
+                    for gpu_index, data in readings_by_gpu.items():
+                        if data["gpu_util"] and data["memory_util"]:
+                            gpu_avgs[f"gpu_{gpu_index}"] = {
+                                "gpu_util_avg": sum(data["gpu_util"]) / len(data["gpu_util"]),
+                                "gpu_util_max": max(data["gpu_util"]),
+                                "memory_util_avg": sum(data["memory_util"]) / len(data["memory_util"]),
+                                "memory_util_max": max(data["memory_util"]),
+                                "memory_used_avg": sum(data["memory_used"]) / len(data["memory_used"]),
+                                "memory_total": data["memory_total"][0]  # Just use the first value
+                            }
+                    
+                    if gpu_avgs:
                         metrics["gpu_usage_summary"] = gpu_avgs
                 
                 # Save benchmark results

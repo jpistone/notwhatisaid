@@ -137,7 +137,8 @@ def process_video():
         # Generate transcript with whisper-timestamped
         print("Starting transcription with whisper-timestamped...")
         audio = whisper.load_audio(audio_path)
-        model = whisper.load_model("base")
+        # Why does tiny produce the best results?
+        model = whisper.load_model("turbo")
         
         transcribe_with_benchmark = benchmark.benchmark(whisper.transcribe)
         result = transcribe_with_benchmark(model, audio, language="en")

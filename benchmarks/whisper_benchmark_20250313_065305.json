@@ -1,0 +1,21 @@
+{
+  "function": "transcribe_timestamped",
+  "timestamp": "2025-03-13T06:53:02.993887",
+  "cpu_usage": [
+    60.3,
+    57.4,
+    62.1,
+    63.9,
+    21.4
+  ],
+  "gpu_usage": [
+    [],
+    [],
+    [],
+    [],
+    []
+  ],
+  "execution_time": 2.4260666370391846,
+  "cpu_usage_avg": 53.02,
+  "cpu_usage_max": 63.9
+}
